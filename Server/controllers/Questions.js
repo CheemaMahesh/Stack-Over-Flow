@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 export const AskQuestion = async (req, res) => {
   const postQuestionData = req.body;
   const userId = req.userId;
-  const postQuestion = new Questions({ ...postQuestionData, userId });
+  const postQuestion = new Questions(postQuestionData );
   try {
     await postQuestion.save();
     res.status(200).json("Posted a question successfully");
@@ -26,3 +26,18 @@ export const getAllquestions= async (req,res)=>{
     }
 
 }
+
+export const deleteQuestion = async (req, res) => {
+  const { id: _id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(_id)) {
+    return res.status(404).send("question unavailable...");
+  }
+
+  try {
+    await Questions.findByIdAndRemove(_id);
+    res.status(200).json({ message: "successfully deleted..." });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
